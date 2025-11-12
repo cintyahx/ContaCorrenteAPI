@@ -1,0 +1,23 @@
+version: '3.4'
+
+services:
+  miotto.bankmore.conta.app:
+    image: ${DOCKER_REGISTRY-}miottobankmorecontaapp
+    depends_on:
+      - bank-db-gogogogoogo
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8080:80
+      - 8081:443
+    environment:
+      ASPNETCORE_ENVIRONMENT: Docker
+
+  bank-db-gogogogoogo:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    ports:
+      - 1434:1433
+    environment:
+      ACCEPT_EULA: Y
+      SA_PASSWORD: bank@123

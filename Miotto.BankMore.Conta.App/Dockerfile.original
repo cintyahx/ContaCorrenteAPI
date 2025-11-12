@@ -1,0 +1,25 @@
+#See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
+
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+  
+COPY *.sln .
+COPY Miotto.BankMore.Conta.App.csproj ./Miotto.BankMore.Conta.App/
+COPY Miotto.BankMore.Conta.Domain.csproj ./Miotto.BankMore.Conta.Domain/
+COPY Miotto.BankMore.Conta.Infra.csproj ./Miotto.BankMore.Conta.Infra/
+COPY Miotto.BankMore.Conta.Service.csproj ./Miotto.BankMore.Conta.Service/
+
+RUN dotnet restore
+
+ 
+COPY . .
+
+WORKDIR /src/Miotto.BankMore.Conta.App
+
+RUN dotnet publish -c Release -o /app --no-restore
+ 
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+WORKDIR /app
+COPY --from=build /app ./
+
+ENTRYPOINT ["dotnet", "Miotto.BankMore.Conta.App.dll"]
